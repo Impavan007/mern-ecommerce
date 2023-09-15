@@ -71,6 +71,7 @@ server.use(
   })
 );
 
+
 server.use(passport.authenticate("session"));
 
 server.use(
@@ -78,10 +79,6 @@ server.use(
     exposedHeaders: ["X-Total-Count"],
   })
 );
-server.get('*', (req, res) =>
-  res.sendFile(path.resolve('build', 'index.html'))
-);
-
 
 
 server.use(express.json());
@@ -99,7 +96,6 @@ server.use("/orders",isAuth(), orderRouter.router);
 server.get('*', (req, res) =>
   res.sendFile(path.resolve('build', 'index.html'))
 );
-
 
 
 passport.use('local',
