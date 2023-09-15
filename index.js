@@ -78,6 +78,10 @@ server.use(
     exposedHeaders: ["X-Total-Count"],
   })
 );
+server.get('*', (req, res) =>
+  res.sendFile(path.resolve('build', 'index.html'))
+);
+
 
 
 server.use(express.json());
