@@ -30,7 +30,7 @@ const path = require("path");
 
 const endpointSecret = process.env.ENDPOINT_SECRET;
 
-server.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
+server.post('/webhook', express.raw({type: 'application/json'}), async (request, response) => {
   const sig = request.headers['stripe-signature'];
 
   let event;
@@ -46,7 +46,9 @@ server.post('/webhook', express.raw({type: 'application/json'}), (request, respo
   switch (event.type) {
     case 'payment_intent.succeeded':
       const paymentIntentSucceeded = event.data.object;
-      // Then define and call a function to handle the event payment_intent.succeeded
+      const order = await Order.findById(paymentIntentSucceeded.metadata.orderId)
+      order.paymentStatus = 'recieved';
+      await order.save();
       break;
     // ... handle other event types
     default:
@@ -166,7 +168,7 @@ const stripe = require("stripe")(process.env.SERVER_KEY);
 
 
 server.post("/create-payment-intent", async (req, res) => {
-  const { totalAmount } = req.body;
+  const { totalAmount ,orderId} = req.body;
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
@@ -176,6 +178,9 @@ server.post("/create-payment-intent", async (req, res) => {
     automatic_payment_methods: {
       enabled: true,
     },
+    metadata:{
+      orderId
+    }
   });
 
   res.send({
