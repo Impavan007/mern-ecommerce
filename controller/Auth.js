@@ -3,7 +3,7 @@ const { User } = require("../model/user");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 
-const SECRET_KEY = "SECRET_KEY";
+
 
 exports.createUser = async (req, res) => {
   try {
@@ -55,4 +55,13 @@ exports.checkAuth = async (req, res) => {
   } else {
     res.sendStatus(401);
   }
+};
+  
+exports.logout = async (req, res) => {
+  res
+    .cookie('jwt', null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    })
+    .sendStatus(200)
 };

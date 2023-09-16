@@ -121,7 +121,7 @@ passport.use('local',
         "sha256",
         async function (err, hashedPassword) {
           if (!crypto.timingSafeEqual(user.password, hashedPassword)) {
-            done(null, false, { message: "invalid credentials" });
+            return done(null, false, { message: "invalid credentials" });
           }
           const token = jwt.sign(sanitizerUser(user),process.env.JWT_SECRET_KEY );
           done(null, {id:user.id,role:user.role,token});
@@ -151,14 +151,12 @@ passport.use('jwt',new JwtStrategy(opts, async function(jwt_payload, done) {
 }));
 
 passport.serializeUser(function (user, cb) {
-  console.log("serialize", user);
   process.nextTick(function () {
     return cb(null, { id: user.id, role: user.role });
   });
 });
 
 passport.deserializeUser(function (user, cb) {
-  console.log("de-serialize", user);
   process.nextTick(function () {
     return cb(null, user);
   });
