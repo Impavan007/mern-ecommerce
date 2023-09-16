@@ -24,6 +24,7 @@ const { isAuth, sanitizerUser, cookieExtractor } = require("./Services/common");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const { Order} =require('./model/order')
+const {env} = require('process')
 
 
 
@@ -172,6 +173,8 @@ const stripe = require("stripe")(process.env.SERVER_KEY);
 
 server.post("/create-payment-intent", async (req, res) => {
   const { totalAmount ,orderId} = req.body;
+  console.log({totalAmount,orderId})
+
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
@@ -190,6 +193,7 @@ server.post("/create-payment-intent", async (req, res) => {
     clientSecret: paymentIntent.client_secret,
   });
 });
+
  
 
 // Webhook
