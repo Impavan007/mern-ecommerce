@@ -25,11 +25,15 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const { Order} =require('./model/order')
 const {env} = require('process')
+const nodemailer = require('nodemailer')
+
+//email
+
+"use strict";
 
 
 
-
-
+//Stripe
 
 const endpointSecret = process.env.ENDPOINT_SECRET;
 
@@ -63,6 +67,8 @@ server.post('/webhook', express.raw({type: 'application/json'}), async (request,
   response.send();
 });
 
+
+//passportAuth
 
 const opts = {};
 opts.jwtFromRequest = cookieExtractor;
@@ -102,6 +108,15 @@ server.use("/orders",isAuth(), orderRouter.router);
 server.get('*', (req, res) =>
   res.sendFile(path.resolve('build', 'index.html'))
 );
+
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+  //
+  // NOTE: You can go to https://forwardemail.net/my-account/emails to see your email delivery status and preview
+  //       Or you can use the "preview-email" npm package to preview emails locally in browsers and iOS Simulator
+  //       <https://github.com/forwardemail/preview-email>
+  //
+
 
 
 passport.use('local',
@@ -161,7 +176,9 @@ passport.deserializeUser(function (user, cb) {
     return cb(null, user);
   });
 });
+ 
 
+///stripe
 
 // This is your test secret API key.
 const stripe = require("stripe")(process.env.SERVER_KEY);
